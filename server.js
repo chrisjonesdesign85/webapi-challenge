@@ -68,7 +68,7 @@ server.delete('/projects/:id', (req, res) => {
 
 
 // UPDATE
-server.put('/', (req, res) => {
+server.put('/projects/:id', (req, res) => {
     const id = req.params.id;
     const changes = req.body;
     projectModel.update(id, changes)
@@ -83,13 +83,36 @@ server.put('/', (req, res) => {
             }
         })
         .catch(err => res.status(500)
-            .json({ message: 'having trouble getting project action.' })
+            .json({ message: 'There is no project with that id.' })
         )
 });
 
 
 
 //ACTIONS
+server.get('/projects/:id/actions', (req, res) => {
+    const id = req.params.id;
+    projectsModel.getProjectActions(id)
+        .then(projectActions => {
+            res.status(200).json(projectActions)
+        })
+        .catch(err => res.status(500).json({ message: 'having trouble getting project action' }))
+})
+
+
+//GET
+server.get('/actions', (req, res) => {
+    actionModel.get()
+        .then(actions => {
+            res.status(200).json(actions)
+        })
+        .catch(err => {
+            res.status(500).json({ error: 'error retrieving the actions' })
+        })
+})
+
+
+//post
 server.post('/actions', (req, res) => {
     const actionInfo = req.body;
     actionModel.insert(actionInfo)
